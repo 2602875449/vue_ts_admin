@@ -2,27 +2,30 @@
     <section class="homepage_container">
         <div class="homepage_header">头部</div>
         <div class="homepage_menu">
-
-            <el-menu default-active="2" v-for="menu in newMenus" :key="menu.id">
-                <el-sub-menu index="1">
+            <el-menu v-for="menu in newMenus" :key="menu.id" :router="true" :unique-opened=true default-active="2">
+                <el-sub-menu :index="menu.id + ''">
                     <template #title>
                         <span>{{ menu.title }}</span>
                     </template>
                     <template v-for="submenu in menu.children" :key="submenu.id">
-                        <el-menu-item v-if="submenu.hidden === 0" index="1-4-1">{{ submenu.title }}</el-menu-item>
+                        <el-menu-item v-if="!submenu.hidden" :index="'/' + menu.name +'/'+ submenu.name">
+                            {{ submenu.title }}
+                        </el-menu-item>
                     </template>
-
                 </el-sub-menu>
-
             </el-menu>
 
         </div>
-        <div class="homepage_content">右侧内容</div>
+        <div class="homepage_content">
+            <router-view></router-view>
+        </div>
     </section>
 </template>
 
 <script setup lang="ts">
-import { useStore } from 'vuex';
+import {useStore} from 'vuex';
+import {computed} from 'vue'
+import {RouterView} from "vue-router";
 
 interface MenuObj {
     parentId: number;
@@ -30,6 +33,7 @@ interface MenuObj {
     title: string;
     hidden: 0 | 1;
     children?: MenuObj[];
+    name: string;
 }
 
 interface NewMenus {
@@ -37,9 +41,8 @@ interface NewMenus {
 }
 
 const store = useStore();
-const newMenus: NewMenus = store.getters.getNewMenus;
+const newMenus = computed<NewMenus>(() => store.getters.getNewMenus)
 
-console.log(newMenus);
 
 </script>
 

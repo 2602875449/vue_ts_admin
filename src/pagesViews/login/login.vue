@@ -14,11 +14,11 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, toRefs } from 'vue';
+import {reactive, ref, toRefs} from 'vue';
 import Cookies from 'js-cookie'
-import { adminLoginApi, amdinInfoApi } from '../../api/user'
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
+import {adminLoginApi} from '../../api/user'
+import {useRouter} from 'vue-router';
+import {useStore} from 'vuex';
 
 
 const state = reactive({
@@ -70,12 +70,9 @@ const loginFn = () => {
         }).then(res => {
             if (res.code === 200) {
                 //先存储token
-                Cookies.set('token', res.data.tokenHead + res.data.token, { expires: 7 });
-                amdinInfoApi().then(res => {
-                    if (res.code === 200) {
-                        store.commit("updateMenus", res.data.menus);
-                        router.push("/homePage");
-                    }
+                Cookies.set('token', res.data.tokenHead + res.data.token, {expires: 7});
+                store.dispatch('getAdminInfo').then(res => {
+                    router.push('/homepage');
                 })
             }
         })
